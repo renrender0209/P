@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube - Debug Mode</title>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .debug-info {
+            background-color: #272727;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .error {
+            color: #ff4444;
+        }
+        .success {
+            color: #44ff44;
+        }
+        .warning {
+            color: #ffaa44;
+        }
+        button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #cc0000;
+        }
+        #apiTest {
+            background-color: #333;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: #ff0000;">YouTube - デバッグモード</h1>
+    
+    <div class="debug-info">
+        <h3>環境情報</h3>
+        <p><strong>URL:</strong> <span id="currentUrl"></span></p>
+        <p><strong>ユーザーエージェント:</strong> <span id="userAgent"></span></p>
+        <p><strong>画面解像度:</strong> <span id="screenInfo"></span></p>
+        <p><strong>ローカル時刻:</strong> <span id="currentTime"></span></p>
+    </div>
+
+    <div class="debug-info">
+        <h3>API接続テスト</h3>
+        <button onclick="testAPI()">APIテスト実行</button>
+        <button onclick="testTrending()">トレンド動画テスト</button>
+        <button onclick="clearResults()">結果クリア</button>
+        <div id="apiTest"></div>
+    </div>
+
+    <div class="debug-info">
+        <h3>アクション</h3>
+        <button onclick="window.location.href='/'">メインアプリに戻る</button>
+        <button onclick="window.location.reload()">ページ再読み込み</button>
+        <button onclick="clearCache()">キャッシュクリア</button>
+    </div>
+
+    <script>
+        // 基本情報表示
+        document.getElementById('currentUrl').textContent = window.location.href;
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+        document.getElementById('screenInfo').textContent = `${screen.width}x${screen.height}`;
+        document.getElementById('currentTime').textContent = new Date().toLocaleString('ja-JP');
+
+        function log(message, type = 'info') {
+            const element = document.getElementById('apiTest');
+            const timestamp = new Date().toLocaleTimeString('ja-JP');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : '';
+            element.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        async function testAPI() {
+            log('=== API接続テスト開始 ===');
+            
+            try {
+                log('サーバー基本接続テスト...');
+                const response = await fetch('/api/trending');
+                log(`レスポンス状態: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`データ取得成功: ${Array.isArray(data) ? data.length : 'null'} 件`, 'success');
+                    
+                    if (Array.isArray(data) && data.length > 0) {
+                        log(`最初の動画: ${data[0].title || 'タイトルなし'}`, 'success');
+                        log(`動画ID: ${data[0].videoId || 'IDなし'}`, 'success');
+                    }
+                } else {
+                    const errorText = await response.text();
+                    log(`エラー詳細: ${errorText}`, 'error');
+                }
+                
+            } catch (error) {
+                log(`接続エラー: ${error.message}`, 'error');
+                log(`エラー詳細: ${error.stack}`, 'error');
+            }
+            
+            log('=== APIテスト完了 ===\n');
+        }
+
+        async function testTrending() {
+            log('=== トレンド動画テスト開始 ===');
+            
+            try {
+                log('日本のトレンド動画を取得中...');
+                const response = await fetch('/api/trending');
+                
+                if (response.ok) {
+                    const videos = await response.json();
+                    log(`取得成功: ${videos.length} 件の動画`, 'success');
+                    
+                    videos.slice(0, 5).forEach((video, index) => {
+                        log(`${index + 1}. ${video.title} (${video.author})`, 'success');
+                    });
+                    
+                    if (videos.length >= 50) {
+                        log('50件以上の動画取得成功！', 'success');
+                    } else {
+                        log(`注意: ${videos.length}件のみ取得（目標50件）`, 'warning');
+                    }
+                } else {
+                    log(`トレンド取得失敗: ${response.status}`, 'error');
+                }
+                
+            } catch (error) {
+                log(`トレンドテストエラー: ${error.message}`, 'error');
+            }
+            
+            log('=== トレンドテスト完了 ===\n');
+        }
+
+        function clearResults() {
+            document.getElementById('apiTest').innerHTML = '';
+        }
+
+        function clearCache() {
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    names.forEach(function(name) {
+                        caches.delete(name);
+                    });
+                });
+            }
+            localStorage.clear();
+            sessionStorage.clear();
+            log('キャッシュクリア完了', 'success');
+        }
+
+        // 自動テスト実行
+        setTimeout(() => {
+            log('自動APIテストを開始します...', 'warning');
+            testAPI();
+        }, 1000);
+    </script>
+</body>
+</html>

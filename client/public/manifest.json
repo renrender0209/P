@@ -1,0 +1,26 @@
+{
+  "name": "YouTube",
+  "short_name": "YouTube",
+  "description": "動画共有サイト - 日本のトレンド動画やおすすめコンテンツを視聴できます。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1f2937",
+  "theme_color": "#dc2626",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* YouTube-like dark theme */
+:root {
+  font-family: 'Roboto', 'Arial', sans-serif;
+  
+  /* YouTube-like colors */
+  --youtube-red: #ff0000;
+  --youtube-dark-bg: #0f0f0f;
+  --youtube-dark-secondary: #272727;
+  --youtube-text: #ffffff;
+  --youtube-text-secondary: #aaaaaa;
+  --youtube-hover: #3f3f3f;
+  --youtube-border: #3f3f3f;
+  --youtube-search-bg: #121212;
+}
+
+/* Utility classes for line clamping */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Search suggestions styling */
+.search-suggestions {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.search-suggestions::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-suggestions::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 3px;
+}
+
+/* Base styling */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', 'Arial', sans-serif;
+  background-color: var(--youtube-dark-bg);
+  color: var(--youtube-text);
+  line-height: 1.4;
+}
+
+#root {
+  min-height: 100vh;
+  background-color: var(--youtube-dark-bg);
+}
+
+/* Ensure dark theme classes work */
+.bg-youtube-dark-bg {
+  background-color: var(--youtube-dark-bg) !important;
+}
+
+.text-youtube-red {
+  color: var(--youtube-red) !important;
+}
+
+.bg-gray-900 {
+  background-color: #111827 !important;
+}
+
+.text-white {
+  color: #ffffff !important;
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--youtube-dark-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #666;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
